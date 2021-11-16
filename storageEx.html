@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+  <script>
+    // 1 - localStorage 생성
+    // localStorage.setItem("sample","Hello World")
+    const obj= {name:"Chae Da Hae", age:29, address:"인천"}
+    // 3 - 객체를 JSON(문자열)로 변환
+    const jsonStr = JSON.stringify(obj)
+
+    console.log(jsonStr)
+
+    localStorage.setItem("sample",jsonStr)
+    //JSON 포맷 : 객체리터럴 을 문자열로 보여주는 형태
+
+    // 5 - 배열 → JSON 변환
+    const arr = [
+        {name:'샤프', price:3000},
+        {name:'볼펜', price:1000}
+    ] //JS 객체니까 loop처리 가능
+
+    localStorage.setItem("products",JSON.stringify(arr))
+
+
+
+
+  </script>
+</body>
+</html>

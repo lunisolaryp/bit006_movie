@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script> // F12 - console 보임
+    // 2 - localStorage 읽어오기
+    const msg = localStorage.getItem("sample") //문자열
+
+    document.write(`<h1>${msg}</h1>`) // innerHTML 처럼 쓰이는 칭구인데 잘 안씀
+
+    // 4 - 받아온 데이터(문자열로 된 JSON)를 JS객체로 변환
+    const obj = JSON.parse(msg)
+    console.dir(obj)
+
+    // 6 - JSON → 배열
+    const arrStr = localStorage.getItem("products") // 문자열
+    const products = JSON.parse(arrStr)
+    // 6.1 - 객체로 변경됨 = loop 가능
+    for (let i = 0; i < products.length; i++) {
+        console.log(products[i])
+    }
+
+
+
+</script>
+
+</body>
+</html>

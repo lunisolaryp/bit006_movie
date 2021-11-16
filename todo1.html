@@ -1,0 +1,195 @@
+<!--여기서는 화면에서 처리해야 하는거랑, 이벤트만 남아있어-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<!--12 - 화면 만들기 CSS-->
+<!--    13 - 등록 화면-->
+<body>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    .panel{
+        width: 100vw;
+        height: 100vh;
+        background-color: lightsalmon;
+    }
+
+    /*16 - menu style*/
+    .menuDiv{
+        /*다른 애들 위치를 신경안쓰고 본인이 무조건 top인 친구*/
+        position:absolute;
+        top:0;
+        z-index:100;
+    }
+
+</style>
+<!--15 - 버튼을 누르면 ADD화면 이동-->
+<div class="menuDiv">
+    <a href="#addPanel">ADD</a>
+    <a href="#listPanel">LIST</a>
+    <a href="#readPanel">READ</a>
+</div>
+
+<!--13.1 panel with <style> -->
+<div class ="panel" id="addPanel">
+    <h1>ADD</h1>
+    <!--   17 - 제목, 내용, 날짜 / 21.1 - value 지정-->
+    <div>
+        <label>제목</label>
+        <input type="text" name="title" size="50" value="새로운 할 일">
+    </div>
+    <div>
+        <label>내용</label>
+        <textarea name="content" cols="60" rows="5">할 일의 내용은...</textarea>
+    </div>
+    <div>
+        <label>날짜</label>
+        <input type="date" name="dueDate" size="50" value="2021-11-16">
+    </div>
+    <!--  18 - 버튼   -->
+    <div>
+        <label>저장</label>
+        <!-- 19.1 - 클릭하면 saveTodo() 실행해라 =이벤트 처리이나 권장되지 않음, 옛날방식이긴 하지만 리액트를 위해 알아두기       -->
+        <button onclick="saveTodo()">Save</button>
+    </div>
+</div>
+
+<!--14 - LIST, READ 패널 추가 = 어제 싱글스레드 화면처럼-->
+<div class ="panel" id="listPanel">
+    <!-- 25 - LIST CSS   -->
+    <style>
+        table {
+            border: 1px solid white;
+        }
+        /*첫번째 아이*/
+        table td:first-child {
+            width: 10vw;
+        }
+        /*n번째 아이*/
+        table td:nth-child(2) {
+            width: 10vw;
+        }
+        table td:nth-child(3) {
+            width: 60vw;
+        }
+        table td:nth-child(4) {
+            width: 20vw;
+        }
+    </style>
+    <h1>LIST</h1>
+    <!-- 24 - 행 목록  -->
+    <table>
+        <thead>
+            <!-- 28 -     -->
+            <td onclick="checkAll()">전체선택</td>
+            <td>번호</td>
+            <td>제목</td>
+            <td>날짜</td>
+        </thead>
+        <!-- 24.1 - 행 데이터와 체크박스       -->
+        <tbody>
+            <!-- <tr>태그 안에 있는 친구들이 배열           -->
+            <tr>
+                <td><input type="checkbox" name="complete"></td>
+                <td>1</td>
+                <td>AAAA</td>
+                <td>2021-11-16</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div class ="panel" id="readPanel">
+    <h1>READ</h1>
+</div>
+
+
+
+<!-- 9 - todo.js에 옮기고 script 태그로 가져오기 = 데이터 처리는 .js, 이벤트, 화면처리는 여기서-->
+<script src ="todo.js"></script>
+<script>
+    <!--    11 - 실제 실행해보기 : 추가-->
+    const todoService = outer()
+    // 19 - button
+    function saveTodo() {
+        // alert("saveTodo")
+        // 20 - 내용 불러오기 by name (input태그로는 가져오면 너무 많은 내용을 가져오니까)
+        const titleEle = document.querySelector("input[name='title']")
+        const contentEle = document.querySelector("textarea[name='content']")
+        const dueDateEle = document.querySelector("input[name='dueDate']")
+        console.log(titleEle, contentEle, dueDateEle)
+
+        // 21.2 - value 넣어주기
+        const title = titleEle.value
+        const content = contentEle.value
+        const dueDate = dueDateEle.value
+
+        // 22.1 - 완료 기능
+        // 29 - true 면 checked 상태로 출력
+        const complete = false
+        // console.log(title,content,dueDate)
+
+        // 22.2 - 완료된 것들 배열로 todoService 넣기
+        todoService.add({title,content,dueDate,complete})
+
+        // 23 - todoService 내용 전체 가져와줘줘
+        // console.log(todoService.getAll())
+
+        //25.1 -
+        showList() // 함수 = 문 = 호이스팅
+    }
+
+    // 25 -
+    function showList(){
+        const todoArr = todoService.getAll()
+        //26 -
+        let str = ''
+        for (let i = 0; i < todoArr.length; i++) {
+            // const temp = todoArr[i]
+            // console.log(temp.idx)
+
+            //25.1 - LIST의 번호, 제목, 날짜, 완료를 각각 끄집어내기
+            const {idx,title,dueDate,complete} = todoArr[i]
+
+            // 26.1  // 31 DELETE 삭제 버튼 - onclick // 32.1 idx매개변수로
+            str += `<tr>
+                <td><input type="checkbox" name="complete" ${complete? 'checked':''}></td>
+                <td>${idx}</td>
+                <td>${title}<button onclick="deleteTodo(${idx})">DEL</button></td>
+                <td>${dueDate}</td>
+            </tr>`
+        }
+        // 26.2 태그 불러올때는 <>없이 태그명만
+        document.querySelector("tbody").innerHTML = str
+    }
+
+     // 30
+    function checkAll(){
+        todoService.changeAll()
+        showList()
+    }
+
+    // 32
+    function deleteTodo(index){
+        confirm("deleteTodo?")
+        //34
+        todoService.removeTodo(index)
+        showList()
+    }
+
+
+    // todoService.add({title:'JS복습'})
+    // todoService.add({title:'Java공부'})
+    //
+    // console.log(todoService.getAll())
+</script>
+</body>
+</html>
+
